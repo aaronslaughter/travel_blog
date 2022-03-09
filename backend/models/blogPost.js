@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const BlogPost = new Schema(
   {
-    version: 1,
+    version: { type: Number, default: 1 },
     title: { type: String, required: true },
     imageUrl: { type: String, required: true },
     body: { type: String, required: true },
