@@ -10,16 +10,19 @@ const BlogPost = new Schema(
     comments: [{
       username: String,
       body: String,
-      reported: Boolean,
-      hidden: Boolean,
+      date: Date,
+      reported: { type: Boolean, default: false },
+      hidden: { type: Boolean, default: false },
       replies: [{
         username: String,
         body: String,
-        reported: Boolean,
-        hidden: Boolean
+        date: Date,
+        reported: { type: Boolean, default: false },
+        hidden: { type: Boolean, default: false }
       }]
     }],
-    hasExtras: Boolean,
+    hidden: { type: Boolean, default: false },
+    hasExtras: { type: Boolean, default: false },
   },
   { timestamps: true }
 )

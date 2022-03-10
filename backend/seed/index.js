@@ -21,11 +21,13 @@ const main = async () => {
         {
           username: 'example user 1',
           body: 'example comment body 1',
+          date: new Date(),
           reported: false,
           hidden: false,
           replies: [{
             username: 'example user 2',
             body: 'example reply body 1',
+            date: new Date(),
             reported: false,
             hidden: false
           }]
@@ -33,11 +35,13 @@ const main = async () => {
         {
           username: 'example user 2',
           body: 'example comment body 2',
+          date: new Date(),
           reported: false,
           hidden: false,
           replies: [{
             username: 'example user 1',
             body: 'example reply body 2',
+            date: new Date(),
             reported: false,
             hidden: false
           }]
