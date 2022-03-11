@@ -17,6 +17,12 @@ const getBlogPostById = async (req, res) => {
     const { id } = req.params
     const blogPost = await BlogPost.findById(id)
 
+    blogPost.comments = blogPost.comments.filter((element) => element.hidden === false)
+
+    blogPost.comments.forEach((comment) => {
+      comment.replies = comment.replies.filter((element) => element.hidden === false)
+    })
+
     return res.status(200).json({ blogPost })
 
   } catch (error) {
