@@ -17,13 +17,17 @@ const getBlogPostById = async (req, res) => {
     const { id } = req.params
     const blogPost = await BlogPost.findById(id)
 
-    blogPost.comments = blogPost.comments.filter((element) => element.hidden === false)
+    if (blogPost) {
+      blogPost.comments = blogPost.comments.filter((element) => element.hidden === false)
 
-    blogPost.comments.forEach((comment) => {
-      comment.replies = comment.replies.filter((element) => element.hidden === false)
-    })
+      blogPost.comments.forEach((comment) => {
+        comment.replies = comment.replies.filter((element) => element.hidden === false)
+      })
 
-    return res.status(200).json({ blogPost })
+      return res.status(200).json({ blogPost })
+    } else {
+      return res.status(404).json('Blog post not found.')
+    }
 
   } catch (error) {
     return res.status(500).json({ error: error.message })
