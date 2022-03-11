@@ -122,7 +122,6 @@ const reportReply = async (req, res) => {
     const { id } = req.params
 
     const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
-    console.log(replyExists);
 
     if (replyExists) {
 
@@ -170,6 +169,90 @@ const reportReply = async (req, res) => {
   }
 }
 
+const hideComment = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+
+    if (commentExists) {
+      const blogPost = await BlogPost.findOneAndUpdate({ 
+        comments: { 
+          $elemMatch: { 
+            _id: id 
+          } 
+        } 
+      }, { 
+        $set: { 
+          'comments.$.hidden': true 
+        } 
+      }, { 
+        new: true 
+      })
+      return res.status(200).send(blogPost)
+    } else {
+      return res.status(404).send('Comment not found')
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+const hideReply = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+
+    if (replyExists) {
+
+      const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+
+      // MongoDB does not support the positional $ operator on doubly nested arrays
+      // the exact indices must be used in this case and are passed to the update method as [reportedKey]
+      let commentIndex
+      let replyIndex
+
+      for (let i = 0; i < blogPost.comments.length; i++) {
+        for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
+          if (blogPost.comments[i].replies[j]._id.toString() === id) {
+            commentIndex = i
+            replyIndex = j
+          }
+        }
+      }
+
+      const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.hidden`
+
+      const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
+        comments: { 
+          $elemMatch: { 
+            replies: { 
+              $elemMatch: { 
+                _id: id 
+              } 
+            } 
+          } 
+        } 
+      }, { 
+        $set: { 
+          [reportedKey]: true 
+        } 
+      })
+
+      return res.status(200).send(updatedBlogPost)
+    } else {
+      return res.status(404).send('Reply not found')
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+
+
 
 module.exports = {
   createBlogPost,
@@ -178,5 +261,7 @@ module.exports = {
   addComment,
   addReply,
   reportComment,
-  reportReply
+  reportReply,
+  hideComment,
+  hideReply
 }

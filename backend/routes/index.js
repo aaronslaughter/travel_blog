@@ -10,6 +10,8 @@ router.get('/blogposts/:id', controllers.getBlogPostById)
 router.post('/blogposts/:id', controllers.addComment)
 router.post('/comments/:id', controllers.addReply)
 router.put('/comments/report/:id', controllers.reportComment)
+router.put('/comments/hide/:id', controllers.hideComment)
 router.put('/replies/report/:id', controllers.reportReply)
+router.put('/replies/hide/:id', controllers.hideReply)
 
 module.exports = router
