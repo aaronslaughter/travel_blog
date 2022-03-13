@@ -1,6 +1,7 @@
 import './App.css';
 import axios from 'axios'
 import { useState, useEffect } from 'react'
+import { BASE_URL } from './globals'
 
 function App() {
 
@@ -8,7 +9,7 @@ function App() {
 
   useEffect(() => {
     const fetchBlogPosts = async () => {
-      const response = await axios.get(`http://localhost:3001/api/blogposts/active`)
+      const response = await axios.get(`${BASE_URL}/blogposts/active`)
       setBlogPosts(response.data.blogPosts)
     }
     
