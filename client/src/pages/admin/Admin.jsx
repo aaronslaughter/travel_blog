@@ -1,14 +1,13 @@
 import React from 'react'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { BASE_URL } from '../../globals'
 import CreateBlogPostController from '../../components/createBlogPost/CreateBlogPostController'
+import AdminBlogPostListController from '../../components/adminBlogPostList/AdminBlogPostListController'
 
 const Admin = () => {
 
   return (
     <div>
       <CreateBlogPostController/>
+      <AdminBlogPostListController/>
     </div>
   )
 }
