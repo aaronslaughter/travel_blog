@@ -45,6 +45,52 @@ const getSummarizedActiveBlogPosts = async (req, res) => {
   }
 }
 
+const getAllSummarizedBlogPosts = async (req, res) => {
+  try {
+    const blogPosts = await BlogPost.find().select('-comments')
+
+    return res.status(200).json({ blogPosts })
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+const hideBlogPost = async (req,res) => {
+  try {
+    const { id } = req.params
+
+    const blogPostExists = await BlogPost.exists({ _id: id })
+
+    if (blogPostExists) {
+      const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: true } }, { new: true })
+      return res.status(200).json(blogPost)
+    } else {
+      return res.status(404).send('Blog Post not found.')
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+const showBlogPost = async (req,res) => {
+  try {
+    const { id } = req.params
+
+    const blogPostExists = await BlogPost.exists({ _id: id })
+
+    if (blogPostExists) {
+      const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: false } }, { new: true })
+      return res.status(200).json(blogPost)
+    } else {
+      return res.status(404).send('Blog Post not found.')
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
 const addComment = async (req, res) => {
   try {
     const { id } = req.params
@@ -268,6 +314,9 @@ module.exports = {
   createBlogPost,
   getBlogPostById,
   getSummarizedActiveBlogPosts,
+  getAllSummarizedBlogPosts,
+  hideBlogPost,
+  showBlogPost,
   addComment,
   addReply,
   reportComment,
