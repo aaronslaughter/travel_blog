@@ -8,3 +8,13 @@ export const CreateBlogPost = async (newBlogPost) => {
     throw error
   }
 }
+
+export const GetActiveBlogPosts = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/blogposts/active`)
+    
+    return response.data.blogPosts
+  } catch (error) {
+    throw error
+  }
+}
