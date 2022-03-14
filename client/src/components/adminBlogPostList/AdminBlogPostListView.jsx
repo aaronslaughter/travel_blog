@@ -10,7 +10,13 @@ const AdminBlogPostListView = ({ blogPosts, handleChange }) => {
         >
           <Card
             key={index}
-            footer={element.title}
+            footer={
+              <CheckboxToggle
+                value={!element.hidden}
+                label={element.hidden ? 'Hidden - ' + element.title : 'Active - ' + element.title}
+                onChange={() => handleChange(element.hidden, element._id)}
+              />
+            }
             className='blogpost-card'
           >
             <img
@@ -18,11 +24,7 @@ const AdminBlogPostListView = ({ blogPosts, handleChange }) => {
               alt={element.title}
             />
           </Card>
-          <CheckboxToggle
-            value={!element.hidden}
-            label={element.hidden ? 'Hidden' : 'Active'}
-            onChange={() => handleChange(element.hidden, element._id)}
-          />
+          
         </div>
       )}
     </div>
