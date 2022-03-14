@@ -8,16 +8,16 @@ function App() {
   return (
     <div className="App">
       <Switch>
-        <Route
-          exact path='/'
-          render={() =>
-            <Home/>
-          }
-        />
         <Route 
           path='/admin'
           render={() => 
             <Admin/>
+          }
+        />
+        <Route
+          path='/'
+          render={() =>
+            <Home/>
           }
         />
       </Switch>
