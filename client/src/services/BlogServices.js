@@ -44,3 +44,45 @@ export const ShowBlogPost = async (blogPostId) => {
     throw error
   }
 }
+
+export const GetBlogPostDetails = async (blogPostId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/blogposts/${blogPostId}`)
+
+    return response.data.blogPost
+  } catch (error) {
+    return null
+  }
+}
+
+export const CreateComment = async (blogPostId, newComment) => {
+  try {
+    await axios.post(`${BASE_URL}/blogposts/${blogPostId}`, newComment)
+  } catch (error) {
+    throw error
+  }
+}
+
+export const CreateReply = async (commentId, newReply) => {
+  try {
+    await axios.post(`${BASE_URL}/comments/${commentId}`, newReply)
+  } catch (error) {
+    throw error
+  }
+}
+
+export const ReportComment = async (commentId) => {
+  try {
+    await axios.put(`${BASE_URL}/comments/report/${commentId}`)
+  } catch (error) {
+    throw error
+  }
+}
+
+export const ReportReply = async (replyId) => {
+  try {
+    await axios.put(`${BASE_URL}/replies/report/${replyId}`)
+  } catch (error) {
+    throw error
+  }
+}
