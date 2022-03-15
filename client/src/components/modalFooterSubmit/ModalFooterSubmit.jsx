@@ -11,7 +11,7 @@ const ModalFooterSubmit = ({toggleIsOpen, handleSubmit}) => {
       />
       <Button
         label='Submit'
-        variant='brand'
+        variant='success'
         onClick={() => handleSubmit()}
       />
     </div>
