@@ -3,6 +3,11 @@ const { BlogPost, Comment, Reply } = require('../models')
 
 const createBlogPost = async (req, res) => {
   try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
     const blogPost = await new BlogPost(req.body)
     await blogPost.save()
 
@@ -65,6 +70,11 @@ const getAllSummarizedBlogPosts = async (req, res) => {
 
 const hideBlogPost = async (req,res) => {
   try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
     const { id } = req.params
 
     if (ObjectId.isValid(id)) {
@@ -89,6 +99,11 @@ const hideBlogPost = async (req,res) => {
 
 const showBlogPost = async (req,res) => {
   try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
     const { id } = req.params
 
     if (ObjectId.isValid(id)) {

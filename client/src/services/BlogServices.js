@@ -1,9 +1,9 @@
 import { BASE_URL } from "../globals"
 import axios from 'axios'
 
-export const CreateBlogPost = async (newBlogPost) => {
+export const CreateBlogPost = async (newBlogPost, passwordInput) => {
   try {
-    await axios.post(`${BASE_URL}/blogposts`, newBlogPost)
+    await axios.post(`${BASE_URL}/blogposts?api_key=${passwordInput}`, newBlogPost)
   } catch (error) {
     throw error
   }
@@ -29,17 +29,17 @@ export const GetAllBlogPosts = async () => {
   }
 }
 
-export const HideBlogPost = async (blogPostId) => {
+export const HideBlogPost = async (blogPostId, passwordInput) => {
   try {
-    await axios.put(`${BASE_URL}/blogposts/hide/${blogPostId}`)
+    await axios.put(`${BASE_URL}/blogposts/hide/${blogPostId}?api_key=${passwordInput}`)
   } catch (error) {
     throw error
   }
 }
 
-export const ShowBlogPost = async (blogPostId) => {
+export const ShowBlogPost = async (blogPostId, passwordInput) => {
   try {
-    await axios.put(`${BASE_URL}/blogposts/show/${blogPostId}`)
+    await axios.put(`${BASE_URL}/blogposts/show/${blogPostId}?api_key=${passwordInput}`)
   } catch (error) {
     throw error
   }
