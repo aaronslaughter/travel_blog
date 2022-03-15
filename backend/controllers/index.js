@@ -1,3 +1,4 @@
+const ObjectId = require('mongoose').Types.ObjectId
 const { BlogPost, Comment, Reply } = require('../models')
 
 const createBlogPost = async (req, res) => {
@@ -15,18 +16,23 @@ const createBlogPost = async (req, res) => {
 const getBlogPostById = async (req, res) => {
   try {
     const { id } = req.params
-    const blogPost = await BlogPost.findById(id)
 
-    if (blogPost) {
-      blogPost.comments = blogPost.comments.filter((element) => element.hidden === false)
+    if (ObjectId.isValid(id)) {
+      const blogPost = await BlogPost.findById(id)
 
-      blogPost.comments.forEach((comment) => {
-        comment.replies = comment.replies.filter((element) => element.hidden === false)
-      })
+      if (blogPost) {
+        blogPost.comments = blogPost.comments.filter((element) => element.hidden === false)
 
-      return res.status(200).json({ blogPost })
+        blogPost.comments.forEach((comment) => {
+          comment.replies = comment.replies.filter((element) => element.hidden === false)
+        })
+
+        return res.status(200).json({ blogPost })
+      } else {
+        res.status(404).json({ error: 'Blog Post not found.'})
+      }
     } else {
-      return res.status(404).json('Blog post not found.')
+      return res.status(404).json({ error: 'Blog Post not found.' })
     }
 
   } catch (error) {
@@ -59,13 +65,19 @@ const hideBlogPost = async (req,res) => {
   try {
     const { id } = req.params
 
-    const blogPostExists = await BlogPost.exists({ _id: id })
+    if (ObjectId.isValid(id)) {
+      const blogPostExists = await BlogPost.exists({ _id: id })
 
-    if (blogPostExists) {
-      const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: true } }, { new: true })
-      return res.status(200).json(blogPost)
+      console.log(blogPostExists);
+
+      if (blogPostExists) {
+        const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: true } }, { new: true })
+        return res.status(200).json(blogPost)
+      } else {
+        return res.status(404).json({ error: 'Blog Post not found.'})
+      }
     } else {
-      return res.status(404).send('Blog Post not found.')
+      return res.status(404).json({ error: 'Blog Post not found.' })
     }
 
   } catch (error) {
@@ -77,13 +89,19 @@ const showBlogPost = async (req,res) => {
   try {
     const { id } = req.params
 
-    const blogPostExists = await BlogPost.exists({ _id: id })
+    if (ObjectId.isValid(id)) {
 
-    if (blogPostExists) {
-      const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: false } }, { new: true })
-      return res.status(200).json(blogPost)
+      const blogPostExists = await BlogPost.exists({ _id: id })
+
+      if (blogPostExists) {
+        const blogPost = await BlogPost.findByIdAndUpdate(id, { $set: { hidden: false } }, { new: true })
+        return res.status(200).json(blogPost)
+      } else {
+        return res.status(404).send({ message: 'Blog Post not found.' })
+      }
+
     } else {
-      return res.status(404).send('Blog Post not found.')
+      return res.status(404).json({message: 'Blog Post not found.'})
     }
 
   } catch (error) {
@@ -96,13 +114,18 @@ const addComment = async (req, res) => {
     const { id } = req.params
     const comment = await new Comment(req.body)
 
-    const blogPostExists = await BlogPost.exists({ _id: id })
+    if (ObjectId.isValid(id)) {
+      const blogPostExists = await BlogPost.exists({ _id: id })
 
-    if (blogPostExists) {
-      const blogPost = await BlogPost.findByIdAndUpdate(id, { $push: { comments: comment } }, { new: true })
-      return res.status(200).json(blogPost)
+      if (blogPostExists) {
+        const blogPost = await BlogPost.findByIdAndUpdate(id, { $push: { comments: comment } }, { new: true })
+        return res.status(200).json(blogPost)
+      } else {
+        return res.status(404).send({ message: 'Blog Post not found.' })
+      }
+
     } else {
-      return res.status(404).send('Blog Post not found.')
+      return res.status(404).send({ message: 'Blog Post not found.' })
     }
     
   } catch (error) {
@@ -115,28 +138,35 @@ const addReply = async (req, res) => {
     const { id } = req.params
     const reply = await new Reply(req.body)
 
-    const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+    if (ObjectId.isValid(id)) {
 
-    if (commentExists) {
-      const blogPost = await BlogPost.findOneAndUpdate({ 
-        comments: { 
-          $elemMatch: { 
-            _id: id 
+      const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+
+      if (commentExists) {
+        const blogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              _id: id 
+            } 
           } 
-        } 
-      }, { 
-        $push: { 
-          'comments.$.replies': reply 
-        } 
-      }, { 
-        new: true 
-      })
+        }, { 
+          $push: { 
+            'comments.$.replies': reply 
+          } 
+        }, { 
+          new: true 
+        })
 
-      return res.status(200).send(blogPost)
+        return res.status(200).send(blogPost)
+
+      } else {
+        return res.status(404).send({ message: 'Comment not found.'})
+      }
 
     } else {
-      return res.status(404).send('Comment not found.')
+      return res.status(404).send({ message: 'Comment not found.' })
     }
+
     
   } catch (error) {
     return res.status(500).json({ error: error.message })
@@ -147,26 +177,35 @@ const reportComment = async (req, res) => {
   try {
     const { id } = req.params
 
-    const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
-
-    if (commentExists) {
-      const blogPost = await BlogPost.findOneAndUpdate({ 
-        comments: { 
-          $elemMatch: { 
-            _id: id 
+    if (ObjectId.isValid(id)) {
+      
+      const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+  
+      if (commentExists) {
+        const blogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              _id: id 
+            } 
           } 
-        } 
-      }, { 
-        $set: { 
-          'comments.$.reported': true 
-        } 
-      }, { 
-        new: true 
-      })
-      return res.status(200).send(blogPost)
+        }, { 
+          $set: { 
+            'comments.$.reported': true 
+          } 
+        }, { 
+          new: true 
+        })
+
+        return res.status(200).send(blogPost)
+
+      } else {
+        return res.status(404).send({ message: 'Comment not found' })
+      }
+      
     } else {
-      return res.status(404).send('Comment not found')
+      return res.status(404).json({ message: 'Comment not found.' })
     }
+
 
   } catch (error) {
     return res.status(500).json({ error: error.message })
@@ -177,48 +216,55 @@ const reportReply = async (req, res) => {
   try {
     const { id } = req.params
 
-    const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+    if (ObjectId.isValid(id)) {
 
-    if (replyExists) {
-
-      const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
-
-      // MongoDB does not support the positional $ operator on doubly nested arrays
-      // the exact indices must be used in this case and are passed to the update method as [reportedKey]
-      let commentIndex
-      let replyIndex
-
-      for (let i = 0; i < blogPost.comments.length; i++) {
-        for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
-          if (blogPost.comments[i].replies[j]._id.toString() === id) {
-            commentIndex = i
-            replyIndex = j
+      const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+      if (replyExists) {
+  
+        const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+        // MongoDB does not support the positional $ operator on doubly nested arrays
+        // the exact indices must be used in this case and are passed to the update method as [reportedKey]
+        let commentIndex
+        let replyIndex
+  
+        for (let i = 0; i < blogPost.comments.length; i++) {
+          for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
+            if (blogPost.comments[i].replies[j]._id.toString() === id) {
+              commentIndex = i
+              replyIndex = j
+            }
           }
         }
-      }
-
-      const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.reported`
-
-      const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
-        comments: { 
-          $elemMatch: { 
-            replies: { 
-              $elemMatch: { 
-                _id: id 
+  
+        const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.reported`
+  
+        const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              replies: { 
+                $elemMatch: { 
+                  _id: id 
+                } 
               } 
             } 
           } 
-        } 
-      }, { 
-        $set: { 
-          [reportedKey]: true 
-        } 
-      })
+        }, { 
+          $set: { 
+            [reportedKey]: true 
+          } 
+        })
+  
+        return res.status(200).send(updatedBlogPost)
+      } else {
+        return res.status(404).send({ message: 'Reply not found' })
+      }
 
-      return res.status(200).send(updatedBlogPost)
     } else {
-      return res.status(404).send('Reply not found')
+      return res.status(404).json({ message: 'Reply not Found.'})
     }
+
 
   } catch (error) {
     return res.status(500).json({ error: error.message })
@@ -229,26 +275,33 @@ const hideComment = async (req, res) => {
   try {
     const { id } = req.params
 
-    const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+    if (ObjectId.isValid(id)) {
 
-    if (commentExists) {
-      const blogPost = await BlogPost.findOneAndUpdate({ 
-        comments: { 
-          $elemMatch: { 
-            _id: id 
+      const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+  
+      if (commentExists) {
+        const blogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              _id: id 
+            } 
           } 
-        } 
-      }, { 
-        $set: { 
-          'comments.$.hidden': true 
-        } 
-      }, { 
-        new: true 
-      })
-      return res.status(200).send(blogPost)
+        }, { 
+          $set: { 
+            'comments.$.hidden': true 
+          } 
+        }, { 
+          new: true 
+        })
+        return res.status(200).send(blogPost)
+      } else {
+        return res.status(404).send({ message: 'Comment not found' })
+      }
+
     } else {
-      return res.status(404).send('Comment not found')
+      return res.status(404).json({ message: 'Comment not Found.'})
     }
+
 
   } catch (error) {
     return res.status(500).json({ error: error.message })
@@ -259,47 +312,53 @@ const hideReply = async (req, res) => {
   try {
     const { id } = req.params
 
-    const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+    if (ObjectId.isValid(id)) {
 
-    if (replyExists) {
-
-      const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
-
-      // MongoDB does not support the positional $ operator on doubly nested arrays
-      // the exact indices must be used in this case and are passed to the update method as [reportedKey]
-      let commentIndex
-      let replyIndex
-
-      for (let i = 0; i < blogPost.comments.length; i++) {
-        for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
-          if (blogPost.comments[i].replies[j]._id.toString() === id) {
-            commentIndex = i
-            replyIndex = j
+      const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+      if (replyExists) {
+  
+        const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+        // MongoDB does not support the positional $ operator on doubly nested arrays
+        // the exact indices must be used in this case and are passed to the update method as [reportedKey]
+        let commentIndex
+        let replyIndex
+  
+        for (let i = 0; i < blogPost.comments.length; i++) {
+          for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
+            if (blogPost.comments[i].replies[j]._id.toString() === id) {
+              commentIndex = i
+              replyIndex = j
+            }
           }
         }
-      }
-
-      const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.hidden`
-
-      const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
-        comments: { 
-          $elemMatch: { 
-            replies: { 
-              $elemMatch: { 
-                _id: id 
+  
+        const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.hidden`
+  
+        const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              replies: { 
+                $elemMatch: { 
+                  _id: id 
+                } 
               } 
             } 
           } 
-        } 
-      }, { 
-        $set: { 
-          [reportedKey]: true 
-        } 
-      })
+        }, { 
+          $set: { 
+            [reportedKey]: true 
+          } 
+        })
+  
+        return res.status(200).send(updatedBlogPost)
 
-      return res.status(200).send(updatedBlogPost)
+      } else {
+        return res.status(404).send({ messsage: 'Reply not found' })
+      }
     } else {
-      return res.status(404).send('Reply not found')
+      return res.status(404).send({ message: 'Reply not found' })
     }
 
   } catch (error) {
