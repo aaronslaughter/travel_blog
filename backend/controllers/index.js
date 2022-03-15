@@ -27,6 +27,8 @@ const getBlogPostById = async (req, res) => {
           comment.replies = comment.replies.filter((element) => element.hidden === false)
         })
 
+        blogPost.comments.reverse()
+
         return res.status(200).json({ blogPost })
       } else {
         res.status(404).json({ error: 'Blog Post not found.'})
