@@ -2,8 +2,6 @@ const { Router } = require('express')
 const controllers = require('../controllers')
 const router = Router()
 
-router.get('/ip', (req, res) => res.send(req.ip))
-
 router.get('/validate', controllers.validateKey)
 router.post('/blogposts', controllers.createBlogPost)
 router.get('/blogposts/active', controllers.getSummarizedActiveBlogPosts)
