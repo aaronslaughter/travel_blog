@@ -1,8 +1,11 @@
 import React from 'react'
 import { useState } from 'react'
+import { ValidatePassword } from '../../services/BlogServices'
 import AdminLogin from '../../components/adminLogin/AdminLogin'
 import CreateBlogPostController from '../../components/createBlogPost/CreateBlogPostController'
 import AdminBlogPostListController from '../../components/adminBlogPostList/AdminBlogPostListController'
+import AdminHideCommentsController from '../../components/adminHideComments/AdminHideCommentsController'
+import AdminHideRepliesController from '../../components/adminHideReplies/AdminHideRepliesController'
 
 const Admin = () => {
 
@@ -10,9 +13,11 @@ const Admin = () => {
   const [loggedIn, toggleLoggedIn] = useState(false)
   const [submitAttempt, toggleSubmitAttempt] = useState(false)
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
-    if (passwordInput === process.env.REACT_APP_KEY) {
+    const validated = await ValidatePassword(passwordInput)
+
+    if (validated) {
       toggleLoggedIn(true)
       toggleSubmitAttempt(false)
     } else {
@@ -34,6 +39,12 @@ const Admin = () => {
             passwordInput={passwordInput}
           />
           <AdminBlogPostListController
+            passwordInput={passwordInput}
+          />
+          <AdminHideCommentsController
+            passwordInput={passwordInput}
+          />
+          <AdminHideRepliesController
             passwordInput={passwordInput}
           />
         </div> :

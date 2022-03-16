@@ -1,6 +1,18 @@
 const ObjectId = require('mongoose').Types.ObjectId
 const { BlogPost, Comment, Reply } = require('../models')
 
+const validateKey = async (req, res) => {
+  try {
+    if (req.query.api_key === process.env.API_KEY) {
+      return res.status(200).json({ validated: true })
+    } else {
+      return res.status(200).json({ validated: false })
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
 const createBlogPost = async (req, res) => {
   try {
 
@@ -229,6 +241,51 @@ const reportComment = async (req, res) => {
   }
 }
 
+const unreportComment = async (req, res) => {
+  try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
+    const { id } = req.params
+
+    if (ObjectId.isValid(id)) {
+      
+      const commentExists = await BlogPost.exists({ comments: { $elemMatch: { _id: id } } })
+  
+      if (commentExists) {
+        const blogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              _id: id 
+            } 
+          } 
+        }, { 
+          $set: { 
+            'comments.$.reported': false 
+          } 
+        }, { 
+          new: true 
+        })
+
+        return res.status(200).send(blogPost)
+
+      } else {
+        return res.status(404).send({ message: 'Comment not found' })
+      }
+      
+    } else {
+      return res.status(404).json({ message: 'Comment not found.' })
+    }
+
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+
 const reportReply = async (req, res) => {
   try {
     const { id } = req.params
@@ -288,8 +345,77 @@ const reportReply = async (req, res) => {
   }
 }
 
+const unreportReply = async (req, res) => {
+  try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
+    const { id } = req.params
+
+    if (ObjectId.isValid(id)) {
+
+      const replyExists = await BlogPost.exists({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+      if (replyExists) {
+  
+        const blogPost = await BlogPost.findOne({ comments: { $elemMatch: { replies: {$elemMatch: { _id: id } } } } })
+  
+        // MongoDB does not support the positional $ operator on doubly nested arrays
+        // the exact indices must be used in this case and are passed to the update method as [reportedKey]
+        let commentIndex
+        let replyIndex
+  
+        for (let i = 0; i < blogPost.comments.length; i++) {
+          for (let j = 0; j < blogPost.comments[i].replies.length; j++) {
+            if (blogPost.comments[i].replies[j]._id.toString() === id) {
+              commentIndex = i
+              replyIndex = j
+            }
+          }
+        }
+  
+        const reportedKey = `comments.${commentIndex}.replies.${replyIndex}.reported`
+  
+        const updatedBlogPost = await BlogPost.findOneAndUpdate({ 
+          comments: { 
+            $elemMatch: { 
+              replies: { 
+                $elemMatch: { 
+                  _id: id 
+                } 
+              } 
+            } 
+          } 
+        }, { 
+          $set: { 
+            [reportedKey]: false 
+          } 
+        })
+  
+        return res.status(200).send(updatedBlogPost)
+      } else {
+        return res.status(404).send({ message: 'Reply not found' })
+      }
+
+    } else {
+      return res.status(404).json({ message: 'Reply not Found.'})
+    }
+
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
 const hideComment = async (req, res) => {
   try {
+
+    if (req.query.api_key !== process.env.API_KEY) {
+      return res.status(401).json({ message: 'Unauthorized'})
+    }
+
     const { id } = req.params
 
     if (ObjectId.isValid(id)) {
@@ -383,10 +509,49 @@ const hideReply = async (req, res) => {
   }
 }
 
+const getReportedComments = async (req, res) => {
+  try {
 
+    const blogPosts = await BlogPost.find()
+    
+    const reportedComments = []
+    
+    // for each blog post, filter for comments that are reported but not hidden
+    // then spread operator push them on the array
+    blogPosts.forEach((blogPost) => {
+      reportedComments.push(...blogPost.comments.filter((comment) => comment.hidden === false && comment.reported === true))
+    })
 
+    return res.status(200).json(reportedComments)
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+const getReportedReplies = async (req, res) => {
+  try {
+    const blogPosts = await BlogPost.find()
+
+    const reportedReplies = []
+    
+    // for each comment, filter for replies that are reported but not hidden
+    // then spread operator push them on the array
+    blogPosts.forEach((blogPost) => {
+      blogPost.comments.forEach((comment) => {
+        reportedReplies.push(...comment.replies.filter((reply) => reply.hidden === false && reply.reported === true))
+      })
+    })
+
+    return res.status(200).json(reportedReplies)
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
 
 module.exports = {
+  validateKey,
   createBlogPost,
   getBlogPostById,
   getSummarizedActiveBlogPosts,
@@ -396,7 +561,11 @@ module.exports = {
   addComment,
   addReply,
   reportComment,
+  unreportComment,
   reportReply,
+  unreportReply,
   hideComment,
-  hideReply
+  hideReply,
+  getReportedComments,
+  getReportedReplies
 }
