@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { ValidatePassword } from '../../services/BlogServices'
 import AdminLogin from '../../components/adminLogin/AdminLogin'
-import CreateBlogPostController from '../../components/createBlogPost/CreateBlogPostController'
+import AdminCreateBlogPostController from '../../components/adminCreateBlogPost/AdminCreateBlogPostController'
 import AdminBlogPostListController from '../../components/adminBlogPostList/AdminBlogPostListController'
 import AdminHideCommentsController from '../../components/adminHideComments/AdminHideCommentsController'
 import AdminHideRepliesController from '../../components/adminHideReplies/AdminHideRepliesController'
@@ -35,7 +35,7 @@ const Admin = () => {
     <div>
       {loggedIn ? 
         <div>
-          <CreateBlogPostController
+          <AdminCreateBlogPostController
             passwordInput={passwordInput}
           />
           <AdminBlogPostListController
