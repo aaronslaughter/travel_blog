@@ -27,7 +27,7 @@ const speedLimiter = slowDown({
 const app = express()
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(enforce.HTTPS())
+  app.use(enforce.HTTPS({ trustXForwardedHostHeader: true }))
 }
 
 app.use(bodyParser.json())
