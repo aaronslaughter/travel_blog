@@ -148,7 +148,7 @@ const addComment = async (req, res) => {
 
       if (blogPostExists) {
         const blogPost = await BlogPost.findByIdAndUpdate(id, { $push: { comments: comment } }, { new: true })
-        return res.status(200).json(blogPost)
+        return res.status(201).json(blogPost)
       } else {
         return res.status(404).send({ message: 'Blog Post not found.' })
       }
@@ -186,7 +186,7 @@ const addReply = async (req, res) => {
           new: true 
         })
 
-        return res.status(200).send(blogPost)
+        return res.status(201).send(blogPost)
 
       } else {
         return res.status(404).send({ message: 'Comment not found.'})
