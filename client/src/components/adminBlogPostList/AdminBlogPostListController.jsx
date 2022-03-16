@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { GetAllBlogPosts, HideBlogPost, ShowBlogPost } from '../../services/BlogServices'
 import AdminBlogPostListView from './AdminBlogPostListView'
 
-const AdminBlogPostListController = () => {
+const AdminBlogPostListController = ({ passwordInput }) => {
   const [blogPosts, setBlogPosts] = useState([])
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const AdminBlogPostListController = () => {
     if (isHidden) {
 
       const showPost = async () => {
-        await ShowBlogPost(blogPostId)
+        await ShowBlogPost(blogPostId, passwordInput)
       }
 
       await showPost()
@@ -29,7 +29,7 @@ const AdminBlogPostListController = () => {
     } else {
 
       const hidePost = async () => {
-        await HideBlogPost(blogPostId)
+        await HideBlogPost(blogPostId, passwordInput)
       }
 
       await hidePost()

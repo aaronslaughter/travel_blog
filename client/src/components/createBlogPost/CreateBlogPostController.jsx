@@ -3,7 +3,7 @@ import CreateBlogPostView from './CreateBlogPostView'
 import { useState } from 'react'
 import { CreateBlogPost } from '../../services/BlogServices'
 
-const CreateBlogPostController = () => {
+const CreateBlogPostController = ( {passwordInput} ) => {
 
   const [newBlogPost, setNewBlogPost] = useState({title: '', imageUrl: '', body: ''})
   const [isOpen, toggleIsOpen] = useState(false)
@@ -15,7 +15,7 @@ const CreateBlogPostController = () => {
         newBlogPost.imageUrl.length > 0 &&
         newBlogPost.body.length > 0) {
 
-      await CreateBlogPost(newBlogPost)
+      await CreateBlogPost(newBlogPost, passwordInput)
       toggleIsOpen(false)
       resetDataFields()
 
