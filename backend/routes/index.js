@@ -2,8 +2,7 @@ const { Router } = require('express')
 const controllers = require('../controllers')
 const router = Router()
 
-router.get('/', (req, res) => res.send('This is root!'))
-
+router.get('/validate', controllers.validateKey)
 router.post('/blogposts', controllers.createBlogPost)
 router.get('/blogposts/active', controllers.getSummarizedActiveBlogPosts)
 router.get('/blogposts', controllers.getAllSummarizedBlogPosts)
@@ -13,8 +12,12 @@ router.put('/blogposts/show/:id', controllers.showBlogPost)
 router.post('/blogposts/:id', controllers.addComment)
 router.post('/comments/:id', controllers.addReply)
 router.put('/comments/report/:id', controllers.reportComment)
+router.put('/comments/unreport/:id', controllers.unreportComment)
 router.put('/comments/hide/:id', controllers.hideComment)
 router.put('/replies/report/:id', controllers.reportReply)
+router.put('/replies/unreport/:id', controllers.unreportReply)
 router.put('/replies/hide/:id', controllers.hideReply)
+router.get('/comments/reported', controllers.getReportedComments)
+router.get('/replies/reported', controllers.getReportedReplies)
 
 module.exports = router
