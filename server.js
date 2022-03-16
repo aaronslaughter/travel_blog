@@ -14,12 +14,12 @@ const PORT  = process.env.PORT || 3001
 
 const rateLimiter = rateLimit({
   windowMs: 20 * 1000, // 20 seconds
-  max: 20
+  max: 40
 })
 
 const speedLimiter = slowDown({
   windowMs: 20 * 1000, // 20 seconds
-  delayAfter: 10,
+  delayAfter: 20,
   delayMs: 500
 })
 
