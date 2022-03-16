@@ -1,9 +1,9 @@
 import React from 'react'
-import CreateBlogPostView from './CreateBlogPostView'
+import AdminCreateBlogPostView from './AdminCreateBlogPostView'
 import { useState } from 'react'
 import { CreateBlogPost } from '../../services/BlogServices'
 
-const CreateBlogPostController = ( {passwordInput} ) => {
+const AdminCreateBlogPostController = ( {passwordInput} ) => {
 
   const [newBlogPost, setNewBlogPost] = useState({title: '', imageUrl: '', body: ''})
   const [isOpen, toggleIsOpen] = useState(false)
@@ -35,7 +35,7 @@ const CreateBlogPostController = ( {passwordInput} ) => {
 
   return (
     <div>
-      <CreateBlogPostView
+      <AdminCreateBlogPostView
         newBlogPost={newBlogPost}
         isOpen={isOpen}
         toggleIsOpen={toggleIsOpen}
@@ -49,4 +49,4 @@ const CreateBlogPostController = ( {passwordInput} ) => {
   )
 }
 
-export default CreateBlogPostController
+export default AdminCreateBlogPostController
