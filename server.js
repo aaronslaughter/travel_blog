@@ -1,4 +1,5 @@
 const express = require('express')
+const enforce = require('express-sslify')
 const routes = require('./backend/routes')
 const db = require('./backend/db')
 const bodyParser = require('body-parser')
@@ -24,6 +25,11 @@ const speedLimiter = slowDown({
 })
 
 const app = express()
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(enforce.HTTPS())
+}
+
 app.use(bodyParser.json())
 app.set('trust proxy', 1)
 app.enable('trust proxy')
