@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Modal, Input, Textarea } from 'react-rainbow-components'
 import ModalFooterSubmit from '../modalFooterSubmit/ModalFooterSubmit'
 
-const CreateBlogPostView = ({ 
+const AdminCreateBlogPostView = ({ 
   newBlogPost, 
   handleSubmit, 
   handleChange, 
@@ -90,4 +90,4 @@ const CreateBlogPostView = ({
   )
 }
 
-export default CreateBlogPostView
+export default AdminCreateBlogPostView
