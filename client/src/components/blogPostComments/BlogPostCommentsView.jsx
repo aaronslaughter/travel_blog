@@ -51,12 +51,6 @@ const BlogPostCommentsView = ({ comments, fetchBlogPostDetails, handleReport }) 
               fetchBlogPostDetails={fetchBlogPostDetails}
             />
           </AccordionSection>
-
-
-
-
-          
-          
         </div>
         )}
       </Accordion>
