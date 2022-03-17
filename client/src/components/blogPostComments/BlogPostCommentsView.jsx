@@ -32,13 +32,7 @@ const BlogPostCommentsView = ({ comments, fetchBlogPostDetails, handleReport }) 
               </div>
             }
           >
-            <BlogPostRepliesController
-              commentId={element._id}
-              replies={element.replies}
-              fetchBlogPostDetails={fetchBlogPostDetails}
-            />
-          </AccordionSection>
-          {element.reported ?
+            {element.reported ?
               <Chip className='report-comment'
                 label='Reported'
                 variant='neutral'
@@ -51,6 +45,18 @@ const BlogPostCommentsView = ({ comments, fetchBlogPostDetails, handleReport }) 
                 onClick={() => handleReport(element._id)}
               />
             }
+            <BlogPostRepliesController
+              commentId={element._id}
+              replies={element.replies}
+              fetchBlogPostDetails={fetchBlogPostDetails}
+            />
+          </AccordionSection>
+
+
+
+
+          
+          
         </div>
         )}
       </Accordion>
