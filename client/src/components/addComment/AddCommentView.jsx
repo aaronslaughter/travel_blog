@@ -46,11 +46,11 @@ const AddCommentView = ({
       />
 
   return (
-    <div>
+    <div className='add-comment-button-wrapper'>
       <Button
         label='Add Comment'
         variant='brand'
-        size='small'
+        size='medium'
         onClick={() => {
           toggleModalIsOpen(!modalIsOpen)
           resetCommentFields()

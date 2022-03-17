@@ -64,7 +64,7 @@ const AdminCreateBlogPostView = ({
     />
   
     return (
-      <div>
+      <div className='create-blogpost-button-wrapper'>
         <Button
           label='Create Blog Post'
           variant='brand'

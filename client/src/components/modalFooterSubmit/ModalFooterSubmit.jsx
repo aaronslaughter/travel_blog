@@ -3,7 +3,7 @@ import { Button } from 'react-rainbow-components'
 
 const ModalFooterSubmit = ({toggleIsOpen, handleSubmit}) => {
   return (
-    <div>
+    <div className='modal-footer-wrapper'>
       <Button
         label='Cancel'
         variant='neutral'

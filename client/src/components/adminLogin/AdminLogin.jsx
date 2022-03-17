@@ -3,7 +3,7 @@ import { Input, Button } from 'react-rainbow-components'
 
 const AdminLogin = ({ passwordInput, handleSubmit, handleChange, submitAttempt }) => {
   return (
-    <div>
+    <div className='login-wrapper'>
       <Input
         label='Input Password'
         placeholder='**********'
