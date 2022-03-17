@@ -13,11 +13,15 @@ const BlogPostCommentsView = ({ comments, fetchBlogPostDetails, handleReport }) 
     <div>
       <Accordion>
         {comments.map((element, index) => 
-          <AccordionSection
-            key={index}
+        <div className='comment-wrapper'
+          key={index}
+        >
+          <AccordionSection className='blogpost-comment'
+            
             icon={
               <Avatar
                 initials={element.username.toUpperCase()}
+                backgroundColor='#5c56b6'
               />
             }
             label={
@@ -28,25 +32,26 @@ const BlogPostCommentsView = ({ comments, fetchBlogPostDetails, handleReport }) 
               </div>
             }
           >
-            {element.reported ?
-              <Chip
-                label='Reported'
-                variant='neutral'
-                size='small'
-              /> :
-              <Button
-                label='Report'
-                variant='destructive'
-                size='small'
-                onClick={() => handleReport(element._id)}
-              />
-            }
             <BlogPostRepliesController
               commentId={element._id}
               replies={element.replies}
               fetchBlogPostDetails={fetchBlogPostDetails}
             />
           </AccordionSection>
+          {element.reported ?
+              <Chip className='report-comment'
+                label='Reported'
+                variant='neutral'
+                size='small'
+              /> :
+              <Button className='report-comment'
+                label='&nbsp;Report&nbsp;'
+                variant='destructive'
+                size='small'
+                onClick={() => handleReport(element._id)}
+              />
+            }
+        </div>
         )}
       </Accordion>
     </div>

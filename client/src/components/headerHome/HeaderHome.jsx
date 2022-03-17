@@ -2,7 +2,7 @@ import React from 'react'
 
 const HeaderHome = () => {
   return (
-    <h1>TODO: Welcome to my Blog</h1>
+    <h1>&lt;noname&gt; Travel Blog</h1>
   )
 }
 
