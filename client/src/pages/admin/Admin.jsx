@@ -35,10 +35,10 @@ const Admin = () => {
     <div>
       {loggedIn ? 
         <div>
-          <AdminCreateBlogPostController
+          <AdminBlogPostListController
             passwordInput={passwordInput}
           />
-          <AdminBlogPostListController
+          <AdminCreateBlogPostController
             passwordInput={passwordInput}
           />
           <AdminHideCommentsController

@@ -3,10 +3,10 @@ import { Card } from 'react-rainbow-components'
 
 const BlogPostCardView = ({blogPostDetails}) => {
   return (
-    <div>
+    <div className='blogpost-card-wrapper'>
       <Card
         footer={
-        <div>
+        <div className='blogpost-footer'>
           <h1>{blogPostDetails.title}</h1>
           <img src={blogPostDetails.imageUrl} alt={blogPostDetails.title} />
           <p>{blogPostDetails.body}</p>

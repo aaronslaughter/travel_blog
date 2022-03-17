@@ -1,4 +1,5 @@
 const express = require('express')
+const enforce = require('express-sslify')
 const routes = require('./backend/routes')
 const db = require('./backend/db')
 const bodyParser = require('body-parser')
@@ -14,18 +15,24 @@ const PORT  = process.env.PORT || 3001
 
 const rateLimiter = rateLimit({
   windowMs: 20 * 1000, // 20 seconds
-  max: 20
+  max: 40
 })
 
 const speedLimiter = slowDown({
   windowMs: 20 * 1000, // 20 seconds
-  delayAfter: 10,
+  delayAfter: 20,
   delayMs: 500
 })
 
 const app = express()
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(enforce.HTTPS({ trustXForwardedHostHeader: true }))
+}
+
 app.use(bodyParser.json())
 app.set('trust proxy', 1)
+app.enable('trust proxy')
 app.use(rateLimiter)
 app.use(speedLimiter)
 app.use(logger('dev'))

@@ -6,15 +6,17 @@ import BlogPostCommentsController from '../blogPostComments/BlogPostCommentsCont
 const BlogPostDetailsView = ({ blogPostDetails, fetchBlogPostDetails }) => {
   return (
     <div>
-      <Breadcrumbs>
-        <Breadcrumb 
-          label='Home'
-          href={window.location.origin}
-        />
-        <Breadcrumb
-          label={blogPostDetails.title}
-        />
-      </Breadcrumbs>
+      <div className='breadcrumb'>
+        <Breadcrumbs>
+          <Breadcrumb 
+            label='Home'
+            href={window.location.origin}
+          />
+          <Breadcrumb
+            label={blogPostDetails.title}
+          />
+        </Breadcrumbs>
+      </div>
       <BlogPostCardView
         blogPostDetails={blogPostDetails}
       />

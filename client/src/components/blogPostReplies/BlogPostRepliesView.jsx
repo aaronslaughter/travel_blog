@@ -24,6 +24,7 @@ const BlogPostRepliesView = ({ replies, handleReport }) => {
               icon={
                 <Avatar
                   initials={element.username.toUpperCase()}
+                  backgroundColor='#5c56b6'
                 />
               }
             >
