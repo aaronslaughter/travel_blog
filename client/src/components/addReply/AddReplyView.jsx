@@ -17,6 +17,7 @@ const AddReplyView = ({
       required
       error='This field is required'
       name='username'
+      maxLength={30}
       value={newReply.username}
       onChange={handleChange}
     /> : 
@@ -24,6 +25,7 @@ const AddReplyView = ({
       label='Username'
       required 
       name='username'
+      maxLength={30}
       value={newReply.username}
       onChange={handleChange}
     />
@@ -34,6 +36,7 @@ const AddReplyView = ({
       required
       error='This field is required'
       name='body'
+      maxLength={500}
       value={newReply.body}
       onChange={handleChange}
     /> :
@@ -41,6 +44,7 @@ const AddReplyView = ({
       label='Body' 
       required 
       name='body'
+      maxLength={500}
       value={newReply.body}
       onChange={handleChange}
     />
